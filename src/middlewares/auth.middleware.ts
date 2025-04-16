@@ -26,8 +26,8 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
-    req.user = decoded;
+    const decoded = jwt.verify(token, config.jwt.secret) as { id: string };
+    (req as any).user = decoded;
     next();
   } catch (error) {
     console.error("Error verifying token:", error);

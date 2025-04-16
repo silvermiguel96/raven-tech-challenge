@@ -16,3 +16,7 @@ export const createUser = async (username: string, email: string, hashedPassword
   });
   return await userRepository.save(user);
 };
+
+export const findById = async (id: string) => {
+  return await userRepository.findOne({ where: { id } });
+};

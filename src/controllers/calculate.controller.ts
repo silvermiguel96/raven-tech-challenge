@@ -6,9 +6,11 @@ import { OperationType } from "../entities/utils/operation";
 import { calculate } from "../services/calculate.service";
 import { sanitizeObject } from "../utils/xss";
 import { Response } from "express";
+import { logger } from "../utils/logger";
 
 export const calculateOperation = async (req: AuthRequest, res: Response): Promise<Response> => {
   try {
+    logger.info("Calculando operación");
     const sanitizedBody = sanitizeObject(req.body);
     const parsed = calculateSchema.safeParse(sanitizedBody);
 
@@ -19,15 +21,14 @@ export const calculateOperation = async (req: AuthRequest, res: Response): Promi
     const { operation, operandA, operandB } = parsed.data;
 
     const result = calculate(operation as OperationType, operandA, operandB);
-
-    const userId = (req as any).user?.id;
+    const userId = req.user.userId;
     if (userId) {
       await OperationRepository.create({
         userId,
         operation,
         operandA,
         operandB: operandB ?? null,
-        result
+        result,
       });
     }
 

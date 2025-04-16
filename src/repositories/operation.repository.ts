@@ -1,6 +1,7 @@
 import { AppDataSource } from "../config/data-source";
 import { FindOptionsWhere, Between } from "typeorm";
 import { Operation } from "../entities/Operation";
+import { findById } from "./auth.repository";
 
 export const OperationRepository = {
   async create(data: {
@@ -10,8 +11,11 @@ export const OperationRepository = {
     operandB: number | null;
     result: string;
   }) {
-    const repo = AppDataSource.getRepository(Operation);
 
+    const user = await findById(data.userId);
+    if (!user) throw new Error("Usuario no encontrado");
+    
+    const repo = AppDataSource.getRepository(Operation);
     const record = repo.create({
       userId: data.userId,
       operation: data.operation,
@@ -22,7 +26,9 @@ export const OperationRepository = {
 
     return await repo.save(record);
   },
-  async findWithFilters(userId: string, filters: any) {
+
+
+  async findWithFilters(filters: any) {
     const {
       operation,
       startDate,
@@ -33,10 +39,10 @@ export const OperationRepository = {
       sortDir = "DESC",
     } = filters;
 
-    const where: FindOptionsWhere<Operation> = { userId };
+    const where: FindOptionsWhere<Operation> = {  };
 
     if (operation) where.operation = operation;
-    if (startDate && endDate) where.timestamp = Between(startDate, endDate); 
+    if (startDate && endDate) where.timestamp = Between(startDate, endDate);
 
     const [data, total] = await AppDataSource.getRepository(Operation)
       .findAndCount({
@@ -45,7 +51,7 @@ export const OperationRepository = {
           [sortField]: sortDir === "DESC" ? "DESC" : "ASC",
         },
         take: size,
-        skip: (page - 1) * size, 
+        skip: (page - 1) * size,
       });
 
     return {
@@ -56,9 +62,9 @@ export const OperationRepository = {
     };
   },
 
-  async findById(userId: string, id: string) {
+  async findById(id: string) {
     return AppDataSource.getRepository(Operation).findOne({
-      where: { id: Number(id), userId },
+      where: { id: Number(id), },
     });
   },
 

@@ -12,9 +12,8 @@ export const getHistory = async (req: Request, res: Response) => {
       if (!parsedFilters.success) {
         return res.status(400).json({ message: "Parámetros de consulta inválidos", errors: parsedFilters.error.errors });
       }
-      const userId = (req as any).user.id;
       const filters = parsedFilters.data;
-      const { total, page, size, data } = await OperationRepository.findWithFilters(userId, filters);
+      const { total, page, size, data } = await OperationRepository.findWithFilters(filters);
   
       return res.json({ total, page, size, data });
     } catch (error) {
@@ -25,8 +24,8 @@ export const getHistory = async (req: Request, res: Response) => {
   
   export const getHistoryById = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = (req as any).user.id;
-    const record = await OperationRepository.findById(userId, id);
+    const record = await OperationRepository.findById(id);
+
     if (!record) {
       return res.status(404).json({ message: "Registro no encontrado" });
     }
@@ -36,9 +35,8 @@ export const getHistory = async (req: Request, res: Response) => {
   
   export const deleteHistoryById = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = (req as any).user.id;
-  
-    const deleted = await OperationRepository.deleteById(userId, id);
+    const deleted = await OperationRepository.deleteById(id);
+
     if (!deleted) { 
       return res.status(404).json({ message: "Registro no encontrado" });
     }
