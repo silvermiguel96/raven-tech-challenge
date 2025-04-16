@@ -1,3 +1,4 @@
+import { errorHandler } from "./utils/errorHandler";
 import { AppDataSource } from './config/data-source';
 import setupSwagger from './config/swagger';
 import { corsOptions } from "./config/cors";
@@ -14,6 +15,7 @@ app.use(corsOptions);
 app.use(helmet());
 app.use(json());
 app.use(routes);
+app.use(errorHandler);
 
 setupSwagger(app);
 

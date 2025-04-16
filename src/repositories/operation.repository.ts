@@ -20,7 +20,7 @@ export const OperationRepository = {
       userId: data.userId,
       operation: data.operation,
       operandA: data.operandA,
-      operandB: data.operandB,
+      operandB: data.operandB ?? 0,
       result: data.result
     });
 
@@ -68,7 +68,7 @@ export const OperationRepository = {
     });
   },
 
-  //CHECK if need userID  
+  //TODO CHECK if need userID  
   async deleteById(id: string) {
     const result = await AppDataSource.getRepository(Operation).delete({
       id: Number(id),
