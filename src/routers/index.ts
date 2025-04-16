@@ -1,5 +1,6 @@
 import listEndpoints from "express-list-endpoints";
 import calculateRoutes from "./calculate.routes";
+import historyRoutes from "./history.routes";
 import authRoutes from './auth.routes';
 import { Router } from "express";
 import { config } from '../config';
@@ -9,6 +10,7 @@ const apiV1 = Router();
 
 apiV1.use("/", authRoutes);
 apiV1.use("/", calculateRoutes); 
+apiV1.use("/", historyRoutes);
 
 router.use("/api/v1", apiV1);
 

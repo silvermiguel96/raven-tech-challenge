@@ -12,6 +12,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src/**/*.ts", "src/routers"],
+  "include": ["src/**/*.ts", "src/routers", "src/types/**/*.d.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,6 +1,8 @@
+import { formatZodErrors } from "../utils/zodErrorFormatter";
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 import { config } from "../config";
+import jwt from "jsonwebtoken";
+import { z } from "zod";
 
 
 export interface AuthRequest extends Request {
@@ -31,4 +33,12 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     console.error("Error verifying token:", error);
     return res.status(403).json({ message: "Token inválido o expirado" });
   }
+};
+
+export const validateParams = (schema: z.Schema) => (req: Request, res: Response, next: NextFunction) => {
+  const result = schema.safeParse(req.params);
+  if (!result.success) {
+    return res.status(400).json({ errors: formatZodErrors(result.error) });
+  }
+  next();
 };
