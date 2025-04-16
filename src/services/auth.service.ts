@@ -20,14 +20,14 @@ export const loginUser = async (email: string, password: string) => {
   const user = await findUserByEmail(email);
   if (!user) {
     throw new ApiError(404, "Usuario no encontrado", [
-      "Por favor, verifique el correo electrónico o regístrese."
+      "Por favor, asegúrese de que la contraseña o correo es correcta.."
     ]);
   }
 
   const isPasswordValid = await comparePassword(password, user.password);
   if (!isPasswordValid) {
     throw new ApiError(403, "Contraseña incorrecta", [
-      "Por favor, asegúrese de que la contraseña es correcta."
+      "Por favor, asegúrese de que la contraseña o correo es correcta."
     ]);
   }
 
