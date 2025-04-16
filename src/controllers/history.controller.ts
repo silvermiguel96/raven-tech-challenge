@@ -43,3 +43,4 @@ export const getHistory = async (req: Request, res: Response) => {
     }
   
     res.status(204).send();
+  };
