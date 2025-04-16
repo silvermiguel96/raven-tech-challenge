@@ -1,14 +1,22 @@
 import { AppDataSource } from './config/data-source';
-import app from './app';
+import authRoutes from './routers/authRoutes';
+import { json } from "body-parser";
 import { config } from './config';
+import express from "express";
+
+const app = express();
+
+app.use(json());
+
+app.use("/api/auth", authRoutes);
 
 AppDataSource.initialize()
   .then(() => {
-    console.log('📦 Database connected');
+    console.log("📦 Database connected");
     app.listen(config.app.port, () => {
       console.log(`🚀 Server running on http://localhost:${config.app.port}`);
     });
   })
-  .catch((error) => {
-    console.error('❌ Database connection failed', error);
+  .catch((err) => {
+    console.error("❌ Database connection failed", err);
   });
