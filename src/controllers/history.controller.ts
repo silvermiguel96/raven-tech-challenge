@@ -1,11 +1,13 @@
 import { OperationRepository } from "../repositories/operation.repository";
 import { historyQuerySchema } from "../schemas/history.schema";
+import { sanitizeObject } from "../utils/xss";
 import { Request, Response } from "express";
 
 //TODO Standart Status errors message
 export const getHistory = async (req: Request, res: Response) => {
     try {
-      const parsedFilters = historyQuerySchema.safeParse(req.query);
+      const sanitizedQuery = sanitizeObject(req.query);
+      const parsedFilters = historyQuerySchema.safeParse(sanitizedQuery);
 
       if (!parsedFilters.success) {
         return res.status(400).json({ message: "Parámetros de consulta inválidos", errors: parsedFilters.error.errors });
@@ -24,7 +26,6 @@ export const getHistory = async (req: Request, res: Response) => {
   export const getHistoryById = async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = (req as any).user.id;
-    console.log('entre  al getHistoryById');
     const record = await OperationRepository.findById(userId, id);
     if (!record) {
       return res.status(404).json({ message: "Registro no encontrado" });

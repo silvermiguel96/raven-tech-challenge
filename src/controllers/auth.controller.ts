@@ -1,11 +1,13 @@
 import { registerSchema, loginSchema } from "../schemas/auth.schema";
 import { registerUser, loginUser } from "../services/auth.service";
 import { formatZodErrors } from "../utils/zodErrorFormatter";
+import { sanitizeObject } from "../utils/xss";
 import { Request, Response } from "express";
 
 export const register = async (req: Request, res: Response)=> {
   try {
-    const result = registerSchema.safeParse(req.body);
+    const sanitizedBody = sanitizeObject(req.body);
+    const result = registerSchema.safeParse(sanitizedBody);
 
     if (!result.success) {
         return res.status(400).json({ errors: formatZodErrors(result.error) });
@@ -25,7 +27,8 @@ export const login = async (req: Request, res: Response) => {
 
   
   try {
-    const result = loginSchema.safeParse(req.body);
+    const sanitizedBody = sanitizeObject(req.body);
+    const result = loginSchema.safeParse(sanitizedBody);
 
     if (!result.success) {
       return res.status(400).json({ errors: formatZodErrors(result.error) });

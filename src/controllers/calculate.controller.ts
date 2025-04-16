@@ -4,11 +4,13 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 import { formatZodErrors } from "../utils/zodErrorFormatter";
 import { OperationType } from "../entities/utils/operation";
 import { calculate } from "../services/calculate.service";
+import { sanitizeObject } from "../utils/xss";
 import { Response } from "express";
 
 export const calculateOperation = async (req: AuthRequest, res: Response): Promise<Response> => {
   try {
-    const parsed = calculateSchema.safeParse(req.body);
+    const sanitizedBody = sanitizeObject(req.body);
+    const parsed = calculateSchema.safeParse(sanitizedBody);
 
     if (!parsed.success) {
       return res.status(400).json({ errors: formatZodErrors(parsed.error) });
