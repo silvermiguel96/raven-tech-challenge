@@ -1,4 +1,4 @@
-import { HistoryRepository } from "../repositories/history.repository";
+import { OperationRepository } from "../repositories/operation.repository";
 import { historyQuerySchema } from "../schemas/history.schema";
 import { Request, Response } from "express";
 
@@ -12,7 +12,7 @@ export const getHistory = async (req: Request, res: Response) => {
       }
       const userId = (req as any).user.id;
       const filters = parsedFilters.data;
-      const { total, page, size, data } = await HistoryRepository.findWithFilters(userId, filters);
+      const { total, page, size, data } = await OperationRepository.findWithFilters(userId, filters);
   
       return res.json({ total, page, size, data });
     } catch (error) {
@@ -25,7 +25,7 @@ export const getHistory = async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = (req as any).user.id;
     console.log('entre  al getHistoryById');
-    const record = await HistoryRepository.findById(userId, id);
+    const record = await OperationRepository.findById(userId, id);
     if (!record) {
       return res.status(404).json({ message: "Registro no encontrado" });
     }
@@ -37,7 +37,7 @@ export const getHistory = async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = (req as any).user.id;
   
-    const deleted = await HistoryRepository.deleteById(userId, id);
+    const deleted = await OperationRepository.deleteById(userId, id);
     if (!deleted) { 
       return res.status(404).json({ message: "Registro no encontrado" });
     }

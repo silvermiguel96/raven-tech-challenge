@@ -2,7 +2,26 @@ import { AppDataSource } from "../config/data-source";
 import { FindOptionsWhere, Between } from "typeorm";
 import { Operation } from "../entities/Operation";
 
-export const HistoryRepository = {
+export const OperationRepository = {
+  async create(data: {
+    userId: string;
+    operation: string;
+    operandA: number;
+    operandB: number | null;
+    result: string;
+  }) {
+    const repo = AppDataSource.getRepository(Operation);
+
+    const record = repo.create({
+      userId: data.userId,
+      operation: data.operation,
+      operandA: data.operandA,
+      operandB: data.operandB,
+      result: data.result
+    });
+
+    return await repo.save(record);
+  },
   async findWithFilters(userId: string, filters: any) {
     const {
       operation,
@@ -43,7 +62,8 @@ export const HistoryRepository = {
     });
   },
 
-  async deleteById(userId: string, id: string) {
+  //CHECK if need userID  
+  async deleteById(id: string) {
     const result = await AppDataSource.getRepository(Operation).delete({
       id: Number(id),
     });

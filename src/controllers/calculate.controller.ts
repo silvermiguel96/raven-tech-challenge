@@ -1,8 +1,9 @@
+import { OperationRepository } from "../repositories/operation.repository";
 import { calculateSchema } from "../schemas/calculate.schema";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import { calculate } from "../services/calculate.service"; 
-import { AppDataSource } from "../config/data-source";
-import { Operation } from "../entities/Operation";
+import { formatZodErrors } from "../utils/zodErrorFormatter";
+import { OperationType } from "../entities/utils/operation";
+import { calculate } from "../services/calculate.service";
 import { Response } from "express";
 
 export const calculateOperation = async (req: AuthRequest, res: Response): Promise<Response> => {
@@ -10,26 +11,23 @@ export const calculateOperation = async (req: AuthRequest, res: Response): Promi
     const parsed = calculateSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      return res.status(400).json({ message: "Datos inválidos", errors: parsed.error.errors });
+      return res.status(400).json({ errors: formatZodErrors(parsed.error) });
     }
-
+    
     const { operation, operandA, operandB } = parsed.data;
-    console.log("Parsed data:", parsed.data);
 
-    const result = calculate(operation, operandA, operandB);
+    const result = calculate(operation as OperationType, operandA, operandB);
 
-    const operationRepository = AppDataSource.getRepository(Operation);
-
-    const newOperation = operationRepository.create({
-      operation,
-      operandA,
-      operandB,
-      result,
-      timestamp: new Date(),
-      userId: req.user.id,
-    });
-
-    await operationRepository.save(newOperation);
+    const userId = (req as any).user?.id;
+    if (userId) {
+      await OperationRepository.create({
+        userId,
+        operation,
+        operandA,
+        operandB: operandB ?? null,
+        result
+      });
+    }
 
     return res.status(200).json({ message: "Operación realizada con éxito", result });
   } catch (error) {
