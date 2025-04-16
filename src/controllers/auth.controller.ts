@@ -1,23 +1,21 @@
-import { registerUser, loginUser } from "../services/auth.service";
 import { registerSchema, loginSchema } from "../schemas/auth.schema";
+import { registerUser, loginUser } from "../services/auth.service";
+import { formatZodErrors } from "../utils/zodErrorFormatter";
+import { sanitizeObject } from "../utils/xss";
 import { Request, Response } from "express";
 
 export const register = async (req: Request, res: Response)=> {
   try {
-    
-    console.log("Register endpoint hit");
-
-    const result = registerSchema.safeParse(req.body);
+    const sanitizedBody = sanitizeObject(req.body);
+    const result = registerSchema.safeParse(sanitizedBody);
 
     if (!result.success) {
-      return res.status(400).json({ message: "Validation failed", errors: result.error.errors });
+        return res.status(400).json({ errors: formatZodErrors(result.error) });
     }
 
     const { username, email, password } = result.data;
-    console.log("Received data:", { username, email, password });
 
     const newUser = await registerUser(username, email, password);
-    console.log("User registered:", newUser);
 
     return res.status(201).json({ message: "Usuario registrado con éxito", user: newUser });
   } catch (error) {
@@ -29,13 +27,14 @@ export const login = async (req: Request, res: Response) => {
 
   
   try {
-    const result = loginSchema.safeParse(req.body);
+    const sanitizedBody = sanitizeObject(req.body);
+    const result = loginSchema.safeParse(sanitizedBody);
 
     if (!result.success) {
-      return res.status(400).json({ message: "Validation failed", errors: result.error.errors });
+      return res.status(400).json({ errors: formatZodErrors(result.error) });
     }
     
-    const { email, password } = req.body;
+    const { email, password } = result.data;
 
     const { token, user } = await loginUser(email, password);
 
