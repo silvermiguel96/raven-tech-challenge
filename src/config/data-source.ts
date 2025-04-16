@@ -1,7 +1,8 @@
-import 'reflect-metadata';
+import { Operation } from '../entities/Operation';
+import { User } from '../entities/User';
 import { DataSource } from 'typeorm';
-import { config } from './index';  // Importas tus variables .env centralizadas
-// import { User } from '../entities/User';  // Cambia esto según tus entidades
+import { config } from './index';
+import 'reflect-metadata';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -10,9 +11,9 @@ export const AppDataSource = new DataSource({
   username: config.db.username,
   password: config.db.password,
   database: config.db.name,
-  synchronize: true, // Cambia a false en producción ⚠️
+  synchronize: true,
   logging: false,
-  entities: [], // Aquí pones tus entidades
+  entities: [User, Operation],
   migrations: ['src/migrations/*.ts'],
   subscribers: [],
 });
