@@ -1,23 +1,28 @@
-import swaggerJSDoc from "swagger-jsdoc";
+import { Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
 
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'Calculator API',
+    title: 'Raven API',
     version: '1.0.0',
-    description: 'API REST de Calculadora con autenticación JWT y almacenamiento de operaciones',
+    description: 'Documentación de la API de Raven',
   },
   servers: [
     {
-      url: 'http://localhost:3000',
-      description: 'Servidor de desarrollo',
+      url: 'http://localhost:3000/api/v1',
     },
   ],
 };
 
 const options = {
   swaggerDefinition,
-  apis: ['src/routes/*.ts', 'src/controllers/*.ts'],  // <-- aquí irán tus anotaciones
+  apis: ['./src/routers/**/*.ts'], 
 };
 
-export const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(options);
+
+export default function setupSwagger(app: Express): void {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}

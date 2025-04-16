@@ -1,4 +1,5 @@
 import { AppDataSource } from './config/data-source';
+import setupSwagger from './config/swagger';
 import { corsOptions } from "./config/cors";
 import { json } from "body-parser";
 import { config } from './config';
@@ -13,6 +14,8 @@ app.use(corsOptions);
 app.use(helmet());
 app.use(json());
 app.use(routes);
+
+setupSwagger(app);
 
 AppDataSource.initialize()
   .then(() => {
