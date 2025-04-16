@@ -1,0 +1,22 @@
+name: Validate PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  check-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        run: |
+          echo "Checking PR title: ${{ github.event.pull_request.title }}"
+          TITLE="${{ github.event.pull_request.title }}"
+
+          if [[ ! "$TITLE" =~ ^(fix|feature) : .+ ]]; then
+            echo "❌ Pull Request title invalid: '$TITLE'"
+            echo "🔖 Expected format: (fix|feature) : description"
+            exit 1
+          fi
+
+          echo "✅ PR title is valid!"
