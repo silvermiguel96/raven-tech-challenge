@@ -8,7 +8,8 @@ if (!process.env.DB_HOST) {
 
 export const config = {
   app: {
-    port: process.env.PORT || 3000,
+    port: process.env.PORT ?? 3000,
+    baseUrl: process.env.BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`,
   },
   db: {
     host: process.env.DB_HOST,
@@ -18,7 +19,7 @@ export const config = {
     name: process.env.DB_NAME,
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'default_secret',
-    expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    secret: process.env.JWT_SECRET ?? 'default_secret',
+    expiresIn: process.env.JWT_EXPIRES_IN ?? '1h',
   }
 };
